@@ -16,16 +16,10 @@ export class Todo extends Entity {
   title: string;
 
   @property({
-    type: 'string',
-  })
-  description?: string;
-
-  @property({
     type: 'boolean',
     required: true,
   })
   isComplete: boolean;
-
 
   constructor(data?: Partial<Todo>) {
     super(data);
