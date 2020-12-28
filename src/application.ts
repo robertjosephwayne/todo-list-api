@@ -17,7 +17,12 @@ export class TodoListApiApplication extends BootMixin(
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
-
+    // Setting up environment variables
+    dotenv.config();
+    dotenvExt.load({
+      schema: '.env',
+      errorOnMissing: true,
+    });
     // Set up the custom sequence
     this.sequence(MySequence);
 
