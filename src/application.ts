@@ -1,7 +1,7 @@
 import {AuthenticationComponent} from '@loopback/authentication';
 import {
   JWTAuthenticationComponent,
-  UserServiceBindings,
+  UserServiceBindings
 } from '@loopback/authentication-jwt';
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
@@ -9,14 +9,15 @@ import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
 import {
   RestExplorerBindings,
-  RestExplorerComponent,
+  RestExplorerComponent
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
-import path from 'path';
-import {DbDataSource} from './datasources';
-import {MySequence} from './sequence';
 import * as dotenv from 'dotenv';
 import * as dotenvExt from 'dotenv-extended';
+import path from 'path';
+import {DbDataSource} from './datasources';
+import {CustomUserRepository} from './repositories';
+import {MySequence} from './sequence';
 
 export {ApplicationConfig};
 
@@ -41,9 +42,15 @@ export class TodoListApiApplication extends BootMixin(
     this.configure(RestExplorerBindings.COMPONENT).to({
       path: '/explorer',
     });
+
     this.component(RestExplorerComponent);
     this.component(AuthenticationComponent);
     this.component(JWTAuthenticationComponent);
+
+    this.bind(UserServiceBindings.USER_REPOSITORY).toClass(
+      CustomUserRepository
+    );
+
     this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
 
     this.projectRoot = __dirname;
