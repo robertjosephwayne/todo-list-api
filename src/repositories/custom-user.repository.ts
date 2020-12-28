@@ -9,9 +9,9 @@ import {
   DefaultCrudRepository,
   HasOneRepositoryFactory,
   juggler,
-  repository
-} from '@loopback/repository';
-import {CustomUser, CustomUserRelations} from '../models';
+  repository, HasManyRepositoryFactory} from '@loopback/repository';
+import {CustomUser, CustomUserRelations, Todo} from '../models';
+import {TodoRepository} from './todo.repository';
 
 export class CustomUserRepository extends DefaultCrudRepository<
   CustomUser,
@@ -23,13 +23,17 @@ export class CustomUserRepository extends DefaultCrudRepository<
     typeof CustomUser.prototype.id
   >;
 
+  public readonly todos: HasManyRepositoryFactory<Todo, typeof CustomUser.prototype.id>;
+
   constructor(
     @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`)
     dataSource: juggler.DataSource,
     @repository.getter('UserCredentialsRepository')
-    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>,
+    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('TodoRepository') protected todoRepositoryGetter: Getter<TodoRepository>,
   ) {
     super(CustomUser, dataSource);
+    this.todos = this.createHasManyRepositoryFactoryFor('todos', todoRepositoryGetter,);
+    this.registerInclusionResolver('todos', this.todos.inclusionResolver);
     this.userCredentials = this.createHasOneRepositoryFactoryFor(
       'userCredentials',
       userCredentialsRepositoryGetter,
