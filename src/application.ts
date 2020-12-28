@@ -3,6 +3,7 @@ import {
   JWTAuthenticationComponent,
   UserServiceBindings
 } from '@loopback/authentication-jwt';
+import {AuthorizationComponent} from '@loopback/authorization';
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
 import {RepositoryMixin} from '@loopback/repository';
@@ -46,6 +47,7 @@ export class TodoListApiApplication extends BootMixin(
     this.component(RestExplorerComponent);
     this.component(AuthenticationComponent);
     this.component(JWTAuthenticationComponent);
+    this.component(AuthorizationComponent);
 
     this.bind(UserServiceBindings.USER_REPOSITORY).toClass(
       CustomUserRepository
