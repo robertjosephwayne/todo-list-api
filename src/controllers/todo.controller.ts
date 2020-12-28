@@ -139,7 +139,7 @@ export class TodoController {
     },
   })
   async updateById(
-    @param.path.number('id') id: string,
+    @param.path.string('id') id: string,
     @requestBody({
       content: {
         'application/json': {
@@ -160,7 +160,7 @@ export class TodoController {
     },
   })
   async replaceById(
-    @param.path.number('id') id: string,
+    @param.path.string('id') id: string,
     @requestBody() todo: Todo,
   ): Promise<void> {
     await this.todoRepository.replaceById(id, todo);
@@ -173,7 +173,7 @@ export class TodoController {
       },
     },
   })
-  async deleteById(@param.path.number('id') id: string): Promise<void> {
+  async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.todoRepository.deleteById(id);
   }
 }
