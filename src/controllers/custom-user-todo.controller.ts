@@ -1,10 +1,10 @@
-import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
   Filter,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
   del,
@@ -14,15 +14,16 @@ import {
   param,
   patch,
   post,
-  requestBody,
+  requestBody
 } from '@loopback/rest';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {
   CustomUser,
-  Todo,
+  Todo
 } from '../models';
 import {CustomUserRepository} from '../repositories';
 
-@authenticate('jwt')
+// @authenticate('jwt')
 export class CustomUserTodoController {
   constructor(
     @repository(CustomUserRepository) protected customUserRepository: CustomUserRepository,
@@ -41,9 +42,12 @@ export class CustomUserTodoController {
     },
   })
   async find(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<Todo>,
   ): Promise<Todo[]> {
+    // if (currentUserProfile[securityId] !== id) return [];
+
     return this.customUserRepository.todos(id).find(filter);
   }
 
