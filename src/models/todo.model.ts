@@ -1,4 +1,4 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {CustomUser} from './custom-user.model';
 
 @model()
@@ -15,6 +15,11 @@ export class Todo extends Entity {
     required: true,
   })
   title: string;
+
+  @property({
+    type: 'string',
+  })
+  description?: string;
 
   @property({
     type: 'boolean',
