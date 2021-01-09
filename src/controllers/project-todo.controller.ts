@@ -1,8 +1,10 @@
-import {inject} from '@loopback/core';
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
+
   Filter,
+
   repository,
   Where
 } from '@loopback/repository';
@@ -16,23 +18,22 @@ import {
   post,
   requestBody
 } from '@loopback/rest';
-import {SecurityBindings, UserProfile} from '@loopback/security';
 import {
-  CustomUser,
+  Project,
   Todo
 } from '../models';
-import {CustomUserRepository} from '../repositories';
+import {ProjectRepository} from '../repositories';
 
-// @authenticate('jwt')
-export class CustomUserTodoController {
+@authenticate('jwt')
+export class ProjectTodoController {
   constructor(
-    @repository(CustomUserRepository) protected customUserRepository: CustomUserRepository,
+    @repository(ProjectRepository) protected projectRepository: ProjectRepository,
   ) { }
 
-  @get('/custom-users/{id}/todos', {
+  @get('/projects/{id}/todos', {
     responses: {
       '200': {
-        description: 'Array of CustomUser has many Todo',
+        description: 'Array of Project has many Todo',
         content: {
           'application/json': {
             schema: {type: 'array', items: getModelSchemaRef(Todo)},
@@ -42,44 +43,42 @@ export class CustomUserTodoController {
     },
   })
   async find(
-    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+    // @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<Todo>,
   ): Promise<Todo[]> {
-    // if (currentUserProfile[securityId] !== id) return [];
-
-    return this.customUserRepository.todos(id).find(filter);
+    return this.projectRepository.todos(id).find(filter);
   }
 
-  @post('/custom-users/{id}/todos', {
+  @post('/projects/{id}/todos', {
     responses: {
       '200': {
-        description: 'CustomUser model instance',
+        description: 'Project model instance',
         content: {'application/json': {schema: getModelSchemaRef(Todo)}},
       },
     },
   })
   async create(
-    @param.path.string('id') id: typeof CustomUser.prototype.id,
+    @param.path.string('id') id: typeof Project.prototype.id,
     @requestBody({
       content: {
         'application/json': {
           schema: getModelSchemaRef(Todo, {
-            title: 'NewTodoInCustomUser',
+            title: 'NewTodoInProject',
             exclude: ['id'],
-            optional: ['customUserId']
+            optional: ['projectId']
           }),
         },
       },
     }) todo: Omit<Todo, 'id'>,
   ): Promise<Todo> {
-    return this.customUserRepository.todos(id).create(todo);
+    return this.projectRepository.todos(id).create(todo);
   }
 
-  @patch('/custom-users/{id}/todos', {
+  @patch('/projects/{id}/todos', {
     responses: {
       '200': {
-        description: 'CustomUser.Todo PATCH success count',
+        description: 'Project.Todo PATCH success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
@@ -96,13 +95,13 @@ export class CustomUserTodoController {
     todo: Partial<Todo>,
     @param.query.object('where', getWhereSchemaFor(Todo)) where?: Where<Todo>,
   ): Promise<Count> {
-    return this.customUserRepository.todos(id).patch(todo, where);
+    return this.projectRepository.todos(id).patch(todo, where);
   }
 
-  @del('/custom-users/{id}/todos', {
+  @del('/projects/{id}/todos', {
     responses: {
       '200': {
-        description: 'CustomUser.Todo DELETE success count',
+        description: 'Project.Todo DELETE success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
@@ -111,6 +110,6 @@ export class CustomUserTodoController {
     @param.path.string('id') id: string,
     @param.query.object('where', getWhereSchemaFor(Todo)) where?: Where<Todo>,
   ): Promise<Count> {
-    return this.customUserRepository.todos(id).delete(where);
+    return this.projectRepository.todos(id).delete(where);
   }
 }
