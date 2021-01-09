@@ -147,6 +147,7 @@ export class CustomUserController {
     );
 
     await this.customUserRepository.userCredentials(savedUser.id).create({password});
+    await this.customUserRepository.projects(savedUser.id).create({name: 'Inbox'});
 
     return savedUser;
   }
