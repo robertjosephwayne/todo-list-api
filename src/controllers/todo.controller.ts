@@ -15,7 +15,7 @@ import {
   put,
   requestBody
 } from '@loopback/rest';
-import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {Todo} from '../models';
 import {TodoRepository} from '../repositories';
 
@@ -41,14 +41,13 @@ export class TodoController {
         'application/json': {
           schema: getModelSchemaRef(Todo, {
             title: 'NewTodo',
-            exclude: ['id', 'customUserId'],
+            exclude: ['id'],
           }),
         },
       },
     })
     todo: Omit<Todo, 'id'>,
   ): Promise<Todo> {
-    todo.customUserId = currentUserProfile[securityId];
     return this.todoRepository.create(todo);
   }
 
@@ -64,11 +63,11 @@ export class TodoController {
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.where(Todo) where?: Where<Todo>,
   ): Promise<Count> {
-    const updatedWhere = {
-      ...where,
-      customUserId: currentUserProfile[securityId]
-    };
-    return this.todoRepository.count(updatedWhere);
+    // const updatedWhere = {
+    //   ...where,
+    //   customUserId: currentUserProfile[securityId]
+    // };
+    return this.todoRepository.count(where);
   }
 
   @get('/todos', {
@@ -90,14 +89,14 @@ export class TodoController {
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.filter(Todo) filter?: Filter<Todo>,
   ): Promise<Todo[]> {
-    const updatedFilter = {
-      ...filter,
-      where: {
-        ...filter?.where,
-        customUserId: currentUserProfile[securityId]
-      }
-    }
-    return this.todoRepository.find(updatedFilter);
+    // const updatedFilter = {
+    //   ...filter,
+    //   where: {
+    //     ...filter?.where,
+    //     customUserId: currentUserProfile[securityId]
+    //   }
+    // }
+    return this.todoRepository.find(filter);
   }
 
   @patch('/todos', {
@@ -120,11 +119,11 @@ export class TodoController {
     todo: Todo,
     @param.where(Todo) where?: Where<Todo>,
   ): Promise<Count> {
-    const updatedWhere = {
-      ...where,
-      customUserId: currentUserProfile[securityId]
-    };
-    return this.todoRepository.updateAll(todo, updatedWhere);
+    // const updatedWhere = {
+    //   ...where,
+    //   customUserId: currentUserProfile[securityId]
+    // };
+    return this.todoRepository.updateAll(todo, where);
   }
 
   @get('/todos/{id}', {
@@ -144,13 +143,13 @@ export class TodoController {
     @param.path.string('id') id: string,
     @param.filter(Todo, {exclude: 'where'}) filter?: FilterExcludingWhere<Todo>
   ): Promise<Todo> {
-    const updatedFilter = {
-      ...filter,
-      where: {
-        customUserId: currentUserProfile[securityId]
-      }
-    }
-    return this.todoRepository.findById(id, updatedFilter);
+    // const updatedFilter = {
+    //   ...filter,
+    //   where: {
+    //     customUserId: currentUserProfile[securityId]
+    //   }
+    // }
+    return this.todoRepository.findById(id, filter);
   }
 
   @patch('/todos/{id}', {
@@ -172,8 +171,8 @@ export class TodoController {
     })
     todo: Todo,
   ): Promise<void> {
-    const currentTodo = await this.todoRepository.findById(id);
-    if (currentUserProfile[securityId] !== currentTodo.customUserId) return;
+    // const currentTodo = await this.todoRepository.findById(id);
+    // if (currentUserProfile[securityId] !== currentTodo.customUserId) return;
     await this.todoRepository.updateById(id, todo);
   }
 
@@ -189,8 +188,8 @@ export class TodoController {
     @param.path.string('id') id: string,
     @requestBody() todo: Todo,
   ): Promise<void> {
-    const currentTodo = await this.todoRepository.findById(id);
-    if (currentUserProfile[securityId] !== currentTodo.customUserId) return;
+    // const currentTodo = await this.todoRepository.findById(id);
+    // if (currentUserProfile[securityId] !== currentTodo.customUserId) return;
     await this.todoRepository.replaceById(id, todo);
   }
 
@@ -205,8 +204,8 @@ export class TodoController {
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.path.string('id') id: string
   ): Promise<void> {
-    const currentTodo = await this.todoRepository.findById(id);
-    if (currentUserProfile[securityId] !== currentTodo.customUserId) return;
+    // const currentTodo = await this.todoRepository.findById(id);
+    // if (currentUserProfile[securityId] !== currentTodo.customUserId) return;
     await this.todoRepository.deleteById(id,);
   }
 }
