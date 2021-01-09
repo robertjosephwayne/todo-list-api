@@ -7,10 +7,16 @@ import {UserCredentials, UserCredentialsRepository, UserServiceBindings} from '@
 import {Getter, inject} from '@loopback/core';
 import {
   DefaultCrudRepository,
-  HasOneRepositoryFactory,
+
+
+  HasManyRepositoryFactory,
+
+  HasManyThroughRepositoryFactory, HasOneRepositoryFactory,
   juggler,
-  repository, HasManyRepositoryFactory} from '@loopback/repository';
-import {CustomUser, CustomUserRelations, Todo} from '../models';
+  repository
+} from '@loopback/repository';
+import {CustomUser, CustomUserRelations, Project, Todo} from '../models';
+import {ProjectRepository} from './project.repository';
 import {TodoRepository} from './todo.repository';
 
 export class CustomUserRepository extends DefaultCrudRepository<
@@ -23,17 +29,22 @@ export class CustomUserRepository extends DefaultCrudRepository<
     typeof CustomUser.prototype.id
   >;
 
-  public readonly todos: HasManyRepositoryFactory<Todo, typeof CustomUser.prototype.id>;
+  public readonly projects: HasManyRepositoryFactory<Project, typeof CustomUser.prototype.id>;
+
+  public readonly todos: HasManyThroughRepositoryFactory<Todo, typeof Todo.prototype.id,
+    Project,
+    typeof CustomUser.prototype.id
+  >;
 
   constructor(
     @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`)
     dataSource: juggler.DataSource,
     @repository.getter('UserCredentialsRepository')
-    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('TodoRepository') protected todoRepositoryGetter: Getter<TodoRepository>,
+    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('TodoRepository') protected todoRepositoryGetter: Getter<TodoRepository>, @repository.getter('ProjectRepository') protected projectRepositoryGetter: Getter<ProjectRepository>,
   ) {
     super(CustomUser, dataSource);
-    this.todos = this.createHasManyRepositoryFactoryFor('todos', todoRepositoryGetter,);
-    this.registerInclusionResolver('todos', this.todos.inclusionResolver);
+    this.projects = this.createHasManyRepositoryFactoryFor('projects', projectRepositoryGetter,);
+    this.registerInclusionResolver('projects', this.projects.inclusionResolver);
     this.userCredentials = this.createHasOneRepositoryFactoryFor(
       'userCredentials',
       userCredentialsRepositoryGetter,
