@@ -1,22 +1,23 @@
-import {DefaultCrudRepository, repository, BelongsToAccessor} from '@loopback/repository';
-import {Todo, TodoRelations, CustomUser} from '../models';
+import {Getter, inject} from '@loopback/core';
+import {BelongsToAccessor, DefaultCrudRepository, repository} from '@loopback/repository';
 import {DbDataSource} from '../datasources';
-import {inject, Getter} from '@loopback/core';
+import {Project, Todo, TodoRelations} from '../models';
 import {CustomUserRepository} from './custom-user.repository';
+import {ProjectRepository} from './project.repository';
 
 export class TodoRepository extends DefaultCrudRepository<
   Todo,
   typeof Todo.prototype.id,
   TodoRelations
-> {
+  > {
 
-  public readonly customUser: BelongsToAccessor<CustomUser, typeof Todo.prototype.id>;
+  public readonly project: BelongsToAccessor<Project, typeof Todo.prototype.id>;
 
   constructor(
-    @inject('datasources.db') dataSource: DbDataSource, @repository.getter('CustomUserRepository') protected customUserRepositoryGetter: Getter<CustomUserRepository>,
+    @inject('datasources.db') dataSource: DbDataSource, @repository.getter('CustomUserRepository') protected customUserRepositoryGetter: Getter<CustomUserRepository>, @repository.getter('ProjectRepository') protected projectRepositoryGetter: Getter<ProjectRepository>,
   ) {
     super(Todo, dataSource);
-    this.customUser = this.createBelongsToAccessorFor('customUser', customUserRepositoryGetter,);
-    this.registerInclusionResolver('customUser', this.customUser.inclusionResolver);
+    this.project = this.createBelongsToAccessorFor('project', projectRepositoryGetter,);
+    this.registerInclusionResolver('project', this.project.inclusionResolver);
   }
 }

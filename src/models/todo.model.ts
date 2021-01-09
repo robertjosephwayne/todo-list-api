@@ -1,5 +1,5 @@
-import {belongsTo, Entity, model, property} from '@loopback/repository';
-import {CustomUser} from './custom-user.model';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {Project} from './project.model';
 
 @model()
 export class Todo extends Entity {
@@ -22,8 +22,8 @@ export class Todo extends Entity {
   })
   isComplete: boolean;
 
-  @belongsTo(() => CustomUser)
-  customUserId: string;
+  @belongsTo(() => Project)
+  projectId: string;
 
   constructor(data?: Partial<Todo>) {
     super(data);
