@@ -1,4 +1,5 @@
 import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -18,6 +19,7 @@ import {
   post,
   requestBody
 } from '@loopback/rest';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {
   Project,
   Todo
@@ -44,10 +46,12 @@ export class ProjectTodoController {
     },
   })
   async find(
-    // @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
     @param.query.object('filter') filter?: Filter<Todo>,
   ): Promise<Todo[]> {
+    const userId = await this.projectRepository.customUser(id).then(customUser => customUser.id);
+    if (userId !== currentUserProfile[securityId]) return [];
     return this.projectRepository.todos(id).find(filter);
   }
 
@@ -60,6 +64,7 @@ export class ProjectTodoController {
     },
   })
   async create(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.path.string('id') id: typeof Project.prototype.id,
     @requestBody({
       content: {
@@ -72,11 +77,14 @@ export class ProjectTodoController {
         },
       },
     }) todo: Omit<Todo, 'id'>,
-  ): Promise<Todo> {
+  ): Promise<Todo | {}> {
+    const userId = await this.projectRepository.customUser(id).then(customUser => customUser.id);
+    // TODO: Review what should be returned for unauthorized requests
+    if (userId !== currentUserProfile[securityId]) return {};
     return this.projectRepository.todos(id).create(todo);
   }
 
-  @patch('/projects/{id}/todos', {
+  @patch('/projects/{id}/todos/{todoId}', {
     responses: {
       '200': {
         description: 'Project.Todo PATCH success count',
@@ -85,18 +93,15 @@ export class ProjectTodoController {
     },
   })
   async patch(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Todo, {partial: true}),
-        },
-      },
-    })
-    todo: Partial<Todo>,
-    @param.query.object('where', getWhereSchemaFor(Todo)) where?: Where<Todo>,
+    @param.path.string('todoId') todoId: string,
+    @requestBody() todo: Partial<Todo>,
   ): Promise<Count> {
-    return this.projectRepository.todos(id).patch(todo, where);
+    const userId = await this.projectRepository.customUser(id).then(customUser => customUser.id);
+    // TODO: Review what should be returned for unauthorized requests
+    if (userId !== currentUserProfile[securityId]) return {count: 0};
+    return this.projectRepository.todos(id).patch(todo, {id: todoId});
   }
 
   @del('/projects/{id}/todos', {
@@ -108,9 +113,13 @@ export class ProjectTodoController {
     },
   })
   async delete(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
     @param.query.object('where', getWhereSchemaFor(Todo)) where?: Where<Todo>,
-  ): Promise<Count> {
+  ): Promise<Count | void> {
+    const userId = await this.projectRepository.customUser(id).then(customUser => customUser.id);
+    // TODO: Review what should be returned for unauthorized requests
+    if (userId !== currentUserProfile[securityId]) return;
     return this.projectRepository.todos(id).delete(where);
   }
 }
