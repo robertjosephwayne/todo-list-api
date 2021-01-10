@@ -24,6 +24,7 @@ import {
 } from '../models';
 import {ProjectRepository} from '../repositories';
 
+// TODO: Finish implementing authorization for routes
 @authenticate('jwt')
 export class ProjectTodoController {
   constructor(

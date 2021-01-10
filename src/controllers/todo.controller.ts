@@ -19,6 +19,7 @@ import {SecurityBindings, UserProfile} from '@loopback/security';
 import {Todo} from '../models';
 import {TodoRepository} from '../repositories';
 
+// TODO: Finish implementing authorization for routes
 @authenticate('jwt')
 export class TodoController {
   constructor(
