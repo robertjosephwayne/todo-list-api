@@ -186,8 +186,9 @@ export class TodoController {
     @param.path.string('id') id: string,
     @requestBody() todo: Todo,
   ): Promise<void> {
-    // const currentTodo = await this.todoRepository.findById(id);
-    // if (currentUserProfile[securityId] !== currentTodo.customUserId) return;
+    const owner = await this.getCustomUserId(id);
+    // TODO: Review what should be returned for unauthorized requests
+    if (owner !== currentUserProfile[securityId]) return;
     await this.todoRepository.replaceById(id, todo);
   }
 
