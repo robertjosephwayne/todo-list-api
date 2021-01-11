@@ -1,23 +1,11 @@
-import {authenticate} from '@loopback/authentication';
-import {inject} from '@loopback/core';
-import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
-  repository,
-  Where
-} from '@loopback/repository';
-import {
-  del, get,
-  getModelSchemaRef, param,
-  patch, post,
-  put,
-  requestBody
-} from '@loopback/rest';
-import {SecurityBindings, UserProfile} from '@loopback/security';
-import {Todo} from '../models';
-import {TodoRepository} from '../repositories';
+import { authenticate } from '@loopback/authentication';
+import { inject } from '@loopback/core';
+import { Count, CountSchema, Filter, FilterExcludingWhere, repository, Where } from '@loopback/repository';
+import { del, get, getModelSchemaRef, param, patch, post, put, requestBody } from '@loopback/rest';
+import { SecurityBindings, securityId, UserProfile } from '@loopback/security';
+
+import { CustomUser, Project, Todo } from '../models';
+import { TodoRepository } from '../repositories';
 
 // TODO: Finish implementing authorization for routes
 @authenticate('jwt')
