@@ -143,13 +143,9 @@ export class TodoController {
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.path.string('id') id: string,
     @param.filter(Todo, {exclude: 'where'}) filter?: FilterExcludingWhere<Todo>
-  ): Promise<Todo> {
-    // const updatedFilter = {
-    //   ...filter,
-    //   where: {
-    //     customUserId: currentUserProfile[securityId]
-    //   }
-    // }
+  ): Promise<Todo | void> {
+    const owner = await this.getCustomUserId(id);
+    if (owner !== currentUserProfile[securityId]) return;
     return this.todoRepository.findById(id, filter);
   }
 
