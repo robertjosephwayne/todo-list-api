@@ -171,9 +171,10 @@ export class TodoController {
       },
     })
     todo: Todo,
-  ): Promise<void> {
-    // const currentTodo = await this.todoRepository.findById(id);
-    // if (currentUserProfile[securityId] !== currentTodo.customUserId) return;
+  ): Promise<Todo | void> {
+    const owner = await this.getCustomUserId(id);
+    // TODO: Review what should be returned for unauthorized requests
+    if (owner !== currentUserProfile[securityId]) return;
     await this.todoRepository.updateById(id, todo);
   }
 
