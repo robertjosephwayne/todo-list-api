@@ -1,6 +1,7 @@
-import {belongsTo, Entity, hasMany, model, property} from '@loopback/repository';
-import {CustomUser} from './custom-user.model';
-import {Todo} from './todo.model';
+import { belongsTo, Entity, hasMany, model, property } from '@loopback/repository';
+
+import { CustomUser } from './custom-user.model';
+import { Todo } from './todo.model';
 
 @model()
 export class Project extends Entity {
