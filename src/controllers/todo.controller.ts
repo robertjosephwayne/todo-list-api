@@ -206,8 +206,22 @@ export class TodoController {
     @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
     @param.path.string('id') id: string
   ): Promise<void> {
-    // const currentTodo = await this.todoRepository.findById(id);
-    // if (currentUserProfile[securityId] !== currentTodo.customUserId) return;
+    const owner = await this.getCustomUserId(id);
+    // TODO: Review what should be returned for unauthorized requests
+    if (owner !== currentUserProfile[securityId]) return;
     await this.todoRepository.deleteById(id,);
+  }
+
+  private async getProject(
+    id: typeof Todo.prototype.id
+  ): Promise<Project> {
+    return this.todoRepository.project(id);
+  }
+
+  private async getCustomUserId(
+    id: typeof Todo.prototype.id
+  ): Promise<typeof CustomUser.prototype.id> {
+    const project = await this.getProject(id);
+    return project.customUserId;
   }
 }
