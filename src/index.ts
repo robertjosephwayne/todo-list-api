@@ -1,4 +1,4 @@
-import {ApplicationConfig, TodoListApiApplication} from './application';
+import { ApplicationConfig, TodoListApiApplication } from './application';
 
 export * from './application';
 

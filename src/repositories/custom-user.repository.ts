@@ -3,21 +3,13 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {UserCredentials, UserCredentialsRepository, UserServiceBindings} from '@loopback/authentication-jwt';
-import {Getter, inject} from '@loopback/core';
-import {
-  DefaultCrudRepository,
+import { UserCredentials, UserCredentialsRepository, UserServiceBindings } from '@loopback/authentication-jwt';
+import { Getter, inject } from '@loopback/core';
+import { DefaultCrudRepository, HasManyRepositoryFactory, HasManyThroughRepositoryFactory, HasOneRepositoryFactory, juggler, repository } from '@loopback/repository';
 
-
-  HasManyRepositoryFactory,
-
-  HasManyThroughRepositoryFactory, HasOneRepositoryFactory,
-  juggler,
-  repository
-} from '@loopback/repository';
-import {CustomUser, CustomUserRelations, Project, Todo} from '../models';
-import {ProjectRepository} from './project.repository';
-import {TodoRepository} from './todo.repository';
+import { CustomUser, CustomUserRelations, Project, Todo } from '../models';
+import { ProjectRepository } from './project.repository';
+import { TodoRepository } from './todo.repository';
 
 export class CustomUserRepository extends DefaultCrudRepository<
   CustomUser,

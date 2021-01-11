@@ -1,9 +1,10 @@
-import {Getter, inject} from '@loopback/core';
-import {BelongsToAccessor, DefaultCrudRepository, repository} from '@loopback/repository';
-import {DbDataSource} from '../datasources';
-import {Project, Todo, TodoRelations} from '../models';
-import {CustomUserRepository} from './custom-user.repository';
-import {ProjectRepository} from './project.repository';
+import { Getter, inject } from '@loopback/core';
+import { BelongsToAccessor, DefaultCrudRepository, repository } from '@loopback/repository';
+
+import { DbDataSource } from '../datasources';
+import { Project, Todo, TodoRelations } from '../models';
+import { CustomUserRepository } from './custom-user.repository';
+import { ProjectRepository } from './project.repository';
 
 export class TodoRepository extends DefaultCrudRepository<
   Todo,

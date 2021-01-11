@@ -1,19 +1,14 @@
-import {authenticate, TokenService} from '@loopback/authentication';
-import {
-  Credentials,
-  MyUserService,
-  TokenServiceBindings,
-  User,
-  UserServiceBindings
-} from '@loopback/authentication-jwt';
-import {inject} from '@loopback/core';
-import {model, property, repository} from '@loopback/repository';
-import {get, getModelSchemaRef, post, requestBody, SchemaObject} from '@loopback/rest';
-import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
-import {genSalt, hash} from 'bcryptjs';
+import { authenticate, TokenService } from '@loopback/authentication';
+import { Credentials, MyUserService, TokenServiceBindings, User, UserServiceBindings } from '@loopback/authentication-jwt';
+import { inject } from '@loopback/core';
+import { model, property, repository } from '@loopback/repository';
+import { get, getModelSchemaRef, post, requestBody, SchemaObject } from '@loopback/rest';
+import { SecurityBindings, securityId, UserProfile } from '@loopback/security';
+import { genSalt, hash } from 'bcryptjs';
 import _ from 'lodash';
-import {CustomUser} from '../models';
-import {CustomUserRepository} from '../repositories';
+
+import { CustomUser } from '../models';
+import { CustomUserRepository } from '../repositories';
 
 @model()
 export class NewUserRequest extends CustomUser {
@@ -79,7 +74,7 @@ export class CustomUserController {
   })
   async login(
     @requestBody(CredentialsRequestBody) credentials: Credentials
-  ): Promise<{token: string}> {
+  ): Promise<{token: string;}> {
 
     // Ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(credentials);

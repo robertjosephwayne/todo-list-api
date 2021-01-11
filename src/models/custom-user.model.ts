@@ -1,7 +1,8 @@
-import {User} from '@loopback/authentication-jwt';
-import {hasMany, model, property} from '@loopback/repository';
-import {Project} from './project.model';
-import {Todo} from './todo.model';
+import { User } from '@loopback/authentication-jwt';
+import { hasMany, model, property } from '@loopback/repository';
+
+import { Project } from './project.model';
+import { Todo } from './todo.model';
 
 @model()
 export class CustomUser extends User {
