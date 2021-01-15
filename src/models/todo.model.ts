@@ -1,6 +1,6 @@
-import { belongsTo, Entity, model, property } from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {Project} from './project.model';
 
-import { Project } from './project.model';
 
 @model()
 export class Todo extends Entity {
@@ -22,6 +22,12 @@ export class Todo extends Entity {
     required: true,
   })
   isComplete: boolean;
+
+  @property({
+    type: 'date',
+    default: () => new Date()
+  })
+  createdAt?: Date;
 
   @belongsTo(() => Project)
   projectId: string;
