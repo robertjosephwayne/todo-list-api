@@ -1,7 +1,5 @@
-import { ApplicationConfig } from '@loopback/core';
-
-import { TodoListApiApplication } from './application';
-import { TodoListApiApplication } from './application';
+import {ApplicationConfig} from '@loopback/core';
+import {TodoListApiApplication} from './application';
 
 /**
  * Export the OpenAPI spec from the application
