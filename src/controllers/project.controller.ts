@@ -1,11 +1,11 @@
-import { authenticate } from '@loopback/authentication';
-import { inject } from '@loopback/core';
-import { Count, CountSchema, Filter, FilterExcludingWhere, repository, Where } from '@loopback/repository';
-import { del, get, getModelSchemaRef, param, patch, post, put, requestBody } from '@loopback/rest';
-import { SecurityBindings, securityId, UserProfile } from '@loopback/security';
+import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
+import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
+import {del, get, getModelSchemaRef, param, patch, post, put, requestBody} from '@loopback/rest';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import {Project} from '../models';
+import {ProjectRepository} from '../repositories';
 
-import { Project } from '../models';
-import { ProjectRepository } from '../repositories';
 
 @authenticate('jwt')
 export class ProjectController {
@@ -195,6 +195,7 @@ export class ProjectController {
   ): Promise<void> {
     const currentProject = await this.projectRepository.findById(id);
     if (currentUserProfile[securityId] !== currentProject.customUserId) return;
+    await this.projectRepository.todos(id).delete();
     await this.projectRepository.deleteById(id);
   }
 }
