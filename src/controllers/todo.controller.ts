@@ -1,11 +1,11 @@
-import { authenticate } from '@loopback/authentication';
-import { inject } from '@loopback/core';
-import { Count, CountSchema, Filter, FilterExcludingWhere, repository, Where } from '@loopback/repository';
-import { del, get, getModelSchemaRef, param, patch, post, put, requestBody } from '@loopback/rest';
-import { SecurityBindings, securityId, UserProfile } from '@loopback/security';
+import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
+import {FilterExcludingWhere, repository} from '@loopback/repository';
+import {del, get, getModelSchemaRef, param, patch, put, requestBody} from '@loopback/rest';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import {CustomUser, Project, Todo} from '../models';
+import {TodoRepository} from '../repositories';
 
-import { CustomUser, Project, Todo } from '../models';
-import { TodoRepository } from '../repositories';
 
 // TODO: Finish implementing authorization for routes
 @authenticate('jwt')
@@ -15,105 +15,105 @@ export class TodoController {
     public todoRepository: TodoRepository,
   ) { }
 
-  @post('/todos', {
-    responses: {
-      '200': {
-        description: 'Todo model instance',
-        content: {'application/json': {schema: getModelSchemaRef(Todo)}},
-      },
-    },
-  })
-  async create(
-    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Todo, {
-            title: 'NewTodo',
-            exclude: ['id'],
-          }),
-        },
-      },
-    })
-    todo: Omit<Todo, 'id'>,
-  ): Promise<Todo> {
-    return this.todoRepository.create(todo);
-  }
+  // @post('/todos', {
+  //   responses: {
+  //     '200': {
+  //       description: 'Todo model instance',
+  //       content: {'application/json': {schema: getModelSchemaRef(Todo)}},
+  //     },
+  //   },
+  // })
+  // async create(
+  //   @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+  //   @requestBody({
+  //     content: {
+  //       'application/json': {
+  //         schema: getModelSchemaRef(Todo, {
+  //           title: 'NewTodo',
+  //           exclude: ['id'],
+  //         }),
+  //       },
+  //     },
+  //   })
+  //   todo: Omit<Todo, 'id'>,
+  // ): Promise<Todo> {
+  //   return this.todoRepository.create(todo);
+  // }
 
-  @get('/todos/count', {
-    responses: {
-      '200': {
-        description: 'Todo model count',
-        content: {'application/json': {schema: CountSchema}},
-      },
-    },
-  })
-  async count(
-    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @param.where(Todo) where?: Where<Todo>,
-  ): Promise<Count> {
-    // const updatedWhere = {
-    //   ...where,
-    //   customUserId: currentUserProfile[securityId]
-    // };
-    return this.todoRepository.count(where);
-  }
+  // @get('/todos/count', {
+  //   responses: {
+  //     '200': {
+  //       description: 'Todo model count',
+  //       content: {'application/json': {schema: CountSchema}},
+  //     },
+  //   },
+  // })
+  // async count(
+  //   @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+  //   @param.where(Todo) where?: Where<Todo>,
+  // ): Promise<Count> {
+  //   // const updatedWhere = {
+  //   //   ...where,
+  //   //   customUserId: currentUserProfile[securityId]
+  //   // };
+  //   return this.todoRepository.count(where);
+  // }
 
-  @get('/todos', {
-    responses: {
-      '200': {
-        description: 'Array of Todo model instances',
-        content: {
-          'application/json': {
-            schema: {
-              type: 'array',
-              items: getModelSchemaRef(Todo, {includeRelations: true}),
-            },
-          },
-        },
-      },
-    },
-  })
-  async find(
-    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @param.filter(Todo) filter?: Filter<Todo>,
-  ): Promise<Todo[]> {
-    // const updatedFilter = {
-    //   ...filter,
-    //   where: {
-    //     ...filter?.where,
-    //     customUserId: currentUserProfile[securityId]
-    //   }
-    // }
-    return this.todoRepository.find(filter);
-  }
+  // @get('/todos', {
+  //   responses: {
+  //     '200': {
+  //       description: 'Array of Todo model instances',
+  //       content: {
+  //         'application/json': {
+  //           schema: {
+  //             type: 'array',
+  //             items: getModelSchemaRef(Todo, {includeRelations: true}),
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // })
+  // async find(
+  //   @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+  //   @param.filter(Todo) filter?: Filter<Todo>,
+  // ): Promise<Todo[]> {
+  //   // const updatedFilter = {
+  //   //   ...filter,
+  //   //   where: {
+  //   //     ...filter?.where,
+  //   //     customUserId: currentUserProfile[securityId]
+  //   //   }
+  //   // }
+  //   return this.todoRepository.find(filter);
+  // }
 
-  @patch('/todos', {
-    responses: {
-      '200': {
-        description: 'Todo PATCH success count',
-        content: {'application/json': {schema: CountSchema}},
-      },
-    },
-  })
-  async updateAll(
-    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Todo, {partial: true}),
-        },
-      },
-    })
-    todo: Todo,
-    @param.where(Todo) where?: Where<Todo>,
-  ): Promise<Count> {
-    // const updatedWhere = {
-    //   ...where,
-    //   customUserId: currentUserProfile[securityId]
-    // };
-    return this.todoRepository.updateAll(todo, where);
-  }
+  // @patch('/todos', {
+  //   responses: {
+  //     '200': {
+  //       description: 'Todo PATCH success count',
+  //       content: {'application/json': {schema: CountSchema}},
+  //     },
+  //   },
+  // })
+  // async updateAll(
+  //   @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+  //   @requestBody({
+  //     content: {
+  //       'application/json': {
+  //         schema: getModelSchemaRef(Todo, {partial: true}),
+  //       },
+  //     },
+  //   })
+  //   todo: Todo,
+  //   @param.where(Todo) where?: Where<Todo>,
+  // ): Promise<Count> {
+  //   // const updatedWhere = {
+  //   //   ...where,
+  //   //   customUserId: currentUserProfile[securityId]
+  //   // };
+  //   return this.todoRepository.updateAll(todo, where);
+  // }
 
   @get('/todos/{id}', {
     responses: {
